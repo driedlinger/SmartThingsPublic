@@ -31,9 +31,13 @@ preferences {
     section("Start Pump Cycle") {
         input "theswitch", "capability.switch", required: true
     	}
-    section("Sleep between pump cycles x: hours") {
-            input "sleepTime", "number", required: true, title: "Interval in hours?"
+    section("Sleep Time Interval") {
+    	input (name: "timeRes", type: "enum", title: "Sleep Time Resolution", options: ["hours", "minutes"])
+        input "sleepTime", "number", required: true, title: "Sleep Interval: "
     }
+    //section("Sleep between pump cycles x: hours") {
+    //        input "sleepTime", "number", required: true, title: "Interval in hours?"
+   // }
     section("Run pump for x: minutes") {
             input "runTime", "number", required: true, title: "Run Time in minutes?"
     }
@@ -106,14 +110,25 @@ def stopPumpHandler() {
     log.debug "stopPumpHandler: Called"
     theswitch.off()	
     log.debug "stopPumpHandler: Turned off pump"
-    //def now = new Date()
-    //log.debug "time is $now"
-    // convert hours to minutes then to seconds
+  
     //def sleept = sleepTime * 60
-    def sleept = sleepTime * 60 * 60
-    log.info "stopPumpHandler: Calling pumpControl again in: $sleepTime hours"
-    log.debug "stopPumpHandler: Calling pumpControl again in: $sleept seconds"
-    runIn(sleept, pumpControl)
+    if (timeRes.equals("hours"))
+    {
+      // convert hours to minutes then to seconds
+      def sleept = sleepTime * 60 *60
+      log.info "stopPumpHandler:  Hours: $sleepTime: $sleept"
+      log.info "stopPumpHandler: Calling pumpControl again in: $sleepTime hours"
+      log.info "stopPumpHandler: Calling pumpControl again in: $sleept seconds"
+      runIn(sleept, pumpControl)
+    }
+    if (timeRes.equals("minutes"))
+    {
+    // convert minutes to seconds
+      def sleept = sleepTime * 60
+      log.info "stopPumpHandler:  Minutes: $sleepTime: $sleept"
+      log.info "stopPumpHandler: Calling pumpControl again in: $sleept seconds"
+      runIn(sleept, pumpControl)
+    } 
     }   
     
 def startPumpHandler() {
