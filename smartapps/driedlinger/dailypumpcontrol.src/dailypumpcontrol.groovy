@@ -17,7 +17,7 @@ definition(
     name: "dailyPumpControl",
     namespace: "driedlinger",
     author: "Darin Riedlinger",
-    description: "Run pump control module on a daily  schedule",
+    description: "Run pump control module on a daily schedule",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
@@ -25,7 +25,10 @@ definition(
 
 
 preferences {
-	section("Select Days to Run") {
+	    section("Choose Module for Pump") {
+        input "theswitch", "capability.switch", required: true
+    	}
+    section("Select Days to Run") {
 		input "days", "enum", title: "Set for specific day(s) of the week", multiple: true, required: false,
                 options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 	}
@@ -33,7 +36,7 @@ preferences {
             input "timeOfDay", "time", title: "Time to start pump?", required: true
             }
     section ("Pump Run Time Duration") {
-            input "howLong", "Minutes", title: "How long to run pump?", required: true
+            input "howLong", "number", title: "How long to run pump?", required: true
             }        
 }
 
@@ -51,8 +54,6 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
-   
    log.debug "Initialize: selected day(s) is: $days"
    if (getDaysOk(days)){
      def timenow = timeToday(timeOfDay, location.timeZone)
@@ -60,6 +61,11 @@ def initialize() {
      log.info "Initialize: job Scheduled at $timenow"
      schedule(timeToday(timeOfDay, location.timeZone), "startPumpHandler")
    }
+   else
+   {
+     log.info "We are not on a selected day"
+   }
+   
 }
 
 
@@ -83,22 +89,20 @@ def getDaysOk(days) {
 }
 def stopPumpHandler() {
     log.debug "stopPumpHandler: Called"
-   // theswitch.off()	
+    theswitch.off()	
     log.debug "stopPumpHandler: Turned off pump"
-    def msgs="$howLong pump run is complete at"
-    genMsg(msgs)
-   
+    def msgs="$howLong minute pump run is complete on"
+    send(genMsg(msgs))   
     }   
     
 def startPumpHandler() {
     log.debug "startPumpHandler: Called"
-    //log.debug "startPumpHandler: CycleCnt is at: $atomicState.cycleCnt"
-    def msgs="Start pump for $howLong"
-    genMsg(msgs)
-   // theswitch.on()
+    def msgs="$howLong minute pump run started on"
+    send(genMsg(msgs))
+    theswitch.on()
     log.debug "startPumpHandler: turned on pump"
     // convert runTime minutes into seconds
-    def runt = howLong * 60
+    def runt = howLong * 60 
     log.info "startPumpHandler: Calling stopPumpHandler in: $howLong minutes"
     runIn(runt, stopPumpHandler)
     }
@@ -108,7 +112,7 @@ def genMsg(mes){
     def df = new java.text.SimpleDateFormat("MMMM dd yyyy hh:mm aaa")
 	df.setTimeZone(TimeZone.getTimeZone("America/New_York"))
     def day = df.format(new Date())
-    return mes + "on $day"
+    return mes + " $day"
    }
     private send(msg) {
 	if (sendPushMessage) {
@@ -117,5 +121,5 @@ def genMsg(mes){
     if (phone) {
         sendSms(phone, msg)
     }
-    log.debug(msg)
+    log.debug "$msg"
 }
