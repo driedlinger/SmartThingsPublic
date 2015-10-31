@@ -44,6 +44,11 @@ preferences {
     section("Run the pump x: cycles") {
             input "cycles", "number", required: true, title: "Number of cycles?"
     }
+    section("Send Notifications?") {
+            // input("recipients", "contact", title: "Send notifications to") 
+             input "phone", "phone", title: "Send an SMS to this number?", required:false
+             
+         }
 }
 
 

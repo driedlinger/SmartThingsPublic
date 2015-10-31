@@ -37,7 +37,12 @@ preferences {
             }
     section ("Pump Run Time Duration") {
             input "howLong", "number", title: "How long to run pump?", required: true
-            }        
+            }       
+    section("Send Notifications?") {
+            // input("recipients", "contact", title: "Send notifications to") 
+             input "phone", "phone", title: "Send an SMS to this number?", required:false
+             
+         }
 }
 
 def installed() {
