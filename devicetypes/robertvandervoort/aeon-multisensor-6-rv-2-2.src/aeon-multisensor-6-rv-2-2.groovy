@@ -391,7 +391,7 @@ def configure() {
 	//	return []
 	//}
 	if (state.debug) log.debug "--Sending configuration command to Multisensor 6--"
-    if (state.debug) log.debug "Prefernces settings: PIRsensitivity: $PIRsensitivity, Reporting Interval: $ReportingInterval, Temp offset: $tempoffset, Humidity offset: $humidityoffset, Luminance offset: $luminanceoffset, UV offset: $ultravioletoffset"
+    if (state.debug) log.debug "Prefernces settings: PIRsensitivity: $PIRsensitivity, Reporting Interval: $ReportingInterval, Temp offset: $tempoffset, /Humidity offset: $humidityoffset, Luminance offset: $luminanceoffset, UV offset: $ultravioletoffset"
 	
 	def PIRsens = 1
 	if (PIRsensitivity) {
@@ -405,11 +405,11 @@ def configure() {
 	if (ReportingInterval) {
 		ReportingInt=ReportingInterval.toInteger()
 	}
-	def tempoff = 0
+	def tempoff = -4
 	if (tempoffset) {
 		tempoff=tempoffset*10
 	}
-	def humidityoff = 0
+	def humidityoff = 11
 	if (humidityoffset) {
 		humidityoff=humidityoffset
 	}
