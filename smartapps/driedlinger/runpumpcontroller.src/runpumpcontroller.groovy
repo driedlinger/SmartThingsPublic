@@ -44,6 +44,9 @@ preferences {
     section("Run the pump x: cycles") {
             input "cycles", "number", required: true, title: "Number of cycles?"
     }
+    section ("Text message run type") {
+            input "mesg", "text", title: "Message run info:", required: true
+            } 
     section("Send Notifications?") {
             // input("recipients", "contact", title: "Send notifications to") 
              input "phone", "phone", title: "Send an SMS to this number?", required:false
@@ -87,7 +90,7 @@ def appTouch(evt) {
     atomicState.cycleCnt = 0
     //def now = new Date()
     //log.debug "time is $now"
-    def msg = "Initiating pump cycle " 
+    def msg = "$mesg pump cycle starting " 
     //genMsg(msg)
     log.debug "appTouch: Set cycleCnt to: $atomicState.cycleCnt"
     send(genMsg(msg))
@@ -106,7 +109,7 @@ def pumpControl() {
    }
    else
    {
-    def msg = "Pump cycle complete  " 
+    def msg = "$mesg Pump cycle complete  " 
     log.info "pumpControl: Pump run cycle complete: $atomicState.cycleCnt of $cycles"
     send(genMsg(msg))
    }

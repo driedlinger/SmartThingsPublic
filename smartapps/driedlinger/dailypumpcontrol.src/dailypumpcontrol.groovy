@@ -38,6 +38,9 @@ preferences {
     section ("Pump Run Time Duration") {
             input "howLong", "number", title: "How long to run pump?", required: true
             }       
+    section ("Text message run type") {
+            input "mesg", "text", title: "Message run info:", required: true
+            } 
     section("Send Notifications?") {
             // input("recipients", "contact", title: "Send notifications to") 
              input "phone", "phone", title: "Send an SMS to this number?", required:false
@@ -96,13 +99,13 @@ def stopPumpHandler() {
     log.debug "stopPumpHandler: Called"
     theswitch.off()	
     log.debug "stopPumpHandler: Turned off pump"
-    def msgs="$howLong minute pump run is complete on"
+    def msgs="$mesg $howLong minute pump run is complete on"
     send(genMsg(msgs))   
     }   
     
 def startPumpHandler() {
     log.debug "startPumpHandler: Called"
-    def msgs="$howLong minute pump run started on"
+    def msgs="$mesg $howLong minute pump run started on"
     send(genMsg(msgs))
     theswitch.on()
     log.debug "startPumpHandler: turned on pump"
