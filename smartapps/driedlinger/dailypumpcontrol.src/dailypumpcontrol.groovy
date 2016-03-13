@@ -35,6 +35,10 @@ preferences {
     section ("Pump Cycle Start Time") {
             input "timeOfDay", "time", title: "Time to start pump?", required: true
             }
+    section ("Set Run Enable FLAG") {
+            input "runEnabled", type: "enum", title: "true=Enabled, false=Disabled", defaultValue: true,  multiple: false,
+            required: true, options: ["true", "false"]
+            }
     section ("Pump Run Time Duration") {
             input "howLong", "number", title: "How long to run pump?", required: true
             }       
@@ -63,6 +67,7 @@ def updated() {
 
 def initialize() {
    log.debug "Initialize: selected day(s) is: $days"
+   log.debug "Run flag is set to $runEnabled"
    if (getDaysOk(days)){
      def timenow = timeToday(timeOfDay, location.timeZone)
      log.info "Initialize: Looks like we are on a correct day"
@@ -104,15 +109,25 @@ def stopPumpHandler() {
     }   
     
 def startPumpHandler() {
+
     log.debug "startPumpHandler: Called"
-    def msgs="$mesg $howLong minute pump run started on"
-    send(genMsg(msgs))
-    theswitch.on()
-    log.debug "startPumpHandler: turned on pump"
-    // convert runTime minutes into seconds
-    def runt = howLong * 60 
-    log.info "startPumpHandler: Calling stopPumpHandler in: $howLong minutes"
-    runIn(runt, stopPumpHandler)
+    log.debug "startPumpHandler: runEnabled flag is set to: $runEnabled"
+    if (runEnabled == "true") {
+      def msgs="$mesg $howLong minute pump run started on"
+      send(genMsg(msgs))
+      theswitch.on()
+      log.debug "startPumpHandler: turned on pump"
+      // convert runTime minutes into seconds
+      def runt = howLong * 60 
+      log.info "startPumpHandler: Calling stopPumpHandler in: $howLong minutes"
+      runIn(runt, stopPumpHandler)
+    }
+     else
+     {
+       log.debug "startPumpHandler: Run flag should be FALSE:  $runEnabled"
+       def msgs="$mesg $howLong minute pump run SKIPPED. runEnable flag is set to $runEnabled on"
+       send(genMsg(msgs))
+     }
     }
     
 def genMsg(mes){    

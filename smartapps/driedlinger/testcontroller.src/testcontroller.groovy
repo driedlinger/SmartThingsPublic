@@ -101,6 +101,7 @@ def appTouch(evt) {
 def pumpControl() {
    	log.debug "pumpContol: Called"
 	log.debug "pumpContol: Pump run cycle Count is: $atomicState.cycleCnt of $cycles cycles"
+    checkStatus()
    if (atomicState.cycleCnt < cycles){
         atomicState.cycleCnt = atomicState.cycleCnt +1 
         log.debug "pumpContol: Incremented cycleCnt to $atomicState.cycleCnt"
@@ -118,6 +119,7 @@ def stopPumpHandler() {
     log.debug "stopPumpHandler: Called"
     theswitch.off()	
     log.debug "stopPumpHandler: Turned off pump"
+    
   
     //def sleept = sleepTime * 60
     if (timeRes.equals("hours"))
@@ -136,7 +138,9 @@ def stopPumpHandler() {
       log.info "stopPumpHandler:  Minutes: $sleepTime: $sleept"
       log.info "stopPumpHandler: Calling pumpControl again in: $sleept seconds"
       runIn(sleept, pumpControl)
+      
     } 
+    checkStatus()
     }   
     
 def startPumpHandler() {
@@ -148,6 +152,7 @@ def startPumpHandler() {
     def runt = runTime * 60
     log.info "startPumpHandler: Calling stopPumpHandler in: $runTime minutes"
     runIn(runt, stopPumpHandler)
+    checkStatus()
     }
     
 def genMsg(mes){    
@@ -165,4 +170,10 @@ def genMsg(mes){
         sendSms(phone, msg)
     }
     log.debug(msg)
+    checkStatus()
+}    
+def checkStatus(){
+	
+    def currentValue = theswitch.currentValue("switch")
+    log.debug "checkStaus:  the current STATE of the switch is $currentValue"
 }
