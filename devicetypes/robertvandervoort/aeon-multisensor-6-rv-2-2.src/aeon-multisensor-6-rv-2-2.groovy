@@ -405,7 +405,7 @@ def configure() {
 	if (ReportingInterval) {
 		ReportingInt=ReportingInterval.toInteger()
 	}
-	def tempoff = -4
+	def tempoff = -40
 	if (tempoffset) {
 		tempoff=tempoffset*10
 	}
