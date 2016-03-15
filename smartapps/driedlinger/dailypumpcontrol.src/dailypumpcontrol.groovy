@@ -35,10 +35,15 @@ preferences {
     section ("Pump Cycle Start Time") {
             input "timeOfDay", "time", title: "Time to start pump?", required: true
             }
-    section ("Set Run Enable FLAG") {
-            input "runEnabled", type: "enum", title: "true=Enabled, false=Disabled", defaultValue: true,  multiple: false,
-            required: true, options: ["true", "false"]
+            
+   section ("Set Run Enable FLAG") {
+            input "runEnabled", "enum", title: "True = Run Enabled, False = Run Disabled", options: ["true", "false"], 
+            defaultValue: true, required: true
             }
+  //  section ("Set Run Enable FLAG") {
+     //       input "runEnabled", type: "enum", title: "true=Enabled, false=Disabled", defaultValue: true,  multiple: false,
+       //     required: true, options: ["true", "false"]
+         //   }
     section ("Pump Run Time Duration") {
             input "howLong", "number", title: "How long to run pump?", required: true
             }       
