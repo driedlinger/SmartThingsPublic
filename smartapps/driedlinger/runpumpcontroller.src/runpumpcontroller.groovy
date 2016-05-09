@@ -118,7 +118,8 @@ def stopPumpHandler() {
     log.debug "stopPumpHandler: Called"
     theswitch.off()	
     log.debug "stopPumpHandler: Turned off pump"
-  
+    def msg = "$mesg  pump OFF: Cycle count: $atomicState.cycleCnt "
+    send(sendPush(msg))
     //def sleept = sleepTime * 60
     if (timeRes.equals("hours"))
     {
@@ -144,6 +145,8 @@ def startPumpHandler() {
     log.debug "startPumpHandler: CycleCnt is at: $atomicState.cycleCnt"
     theswitch.on()
     log.debug "startPumpHandler: turned on pump"
+    def msg = "$mesg  pump ON: Cycle count: $atomicState.cycleCnt "
+    send(sendPush(msg))
     // convert runTime minutes into seconds
     def runt = runTime * 60
     log.info "startPumpHandler: Calling stopPumpHandler in: $runTime minutes"
@@ -157,12 +160,28 @@ def genMsg(mes){
     def day = df.format(new Date())
     return mes + "on $day"
    }
-    private send(msg) {
+   
+private send(msg) {
 	if (sendPushMessage) {
         sendPush(msg)
     }
     if (phone) {
         sendSms(phone, msg)
+    }
+    log.debug(msg)
+    }
+def genPushMsg(mes){    
+    def now = new Date()
+    def df = new java.text.SimpleDateFormat("MMMM dd yyyy hh:mm aaa")
+	df.setTimeZone(TimeZone.getTimeZone("America/New_York"))
+    def day = df.format(new Date())
+    //return mes + "at $day"
+    msg = mes + "at $day"
+    sendPush(msg)   
+   }
+private sendPush(msg) {
+	if (sendPushMessage) {
+        sendPush(msg)
     }
     log.debug(msg)
 }
